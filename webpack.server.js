@@ -1,5 +1,10 @@
 const path = require("path");
-module.exports = {
+// require the base set up and merge it
+const merge = require("webpack-merge");
+const baseConfig = require("./webpack.base");
+const webpackNodeExternals = require("webpack-node-externals");
+
+const config = {
   // inform webpack that we are building a bundle
   // forn nodeJS, rateher than for the browser
 
@@ -8,29 +13,20 @@ module.exports = {
   // tell webpack the root file of our server application
 
   entry: "./src/index.js",
-  // tell wbpack where to put the out put file
+  // tell webpack where to put the out put file
   // that is generated
+  // the server bundle will be executed in the server side just like
+  // executing node server.js in traditional express servers
+  // it will not be shipped to the client
+  // only the client bundle will be shipped
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "build"),
   },
-
-  // tell webpack to run babel on every file it runs through
-
-  module: {
-    rules: [
-      {
-        test: /\.js?$/, // apply babel to ony js files
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        options: {
-          presets: [
-            "react",
-            "stage-0",
-            ["env", { targets: { browsers: ["last 2 versions"] } }],
-          ],
-        },
-      },
-    ],
-  },
+  // not include any files that are inside the node_modules foder inside the build server bundle
+  externals: [webpackNodeExternals()],
 };
+
+// mege the two configs together
+
+module.exports = merge(baseConfig, config);

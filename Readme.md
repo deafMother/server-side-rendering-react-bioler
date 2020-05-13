@@ -41,7 +41,6 @@
               },
               // this has to be outputed in the public directory
 
-
 ## five(set up the scripts in package.json)
 
 - we need to run these tree scripts in devolopment however in production not need to run nodemon
@@ -49,12 +48,15 @@
 ```js
 
  "scripts": {
+
     // set up nodemon the watc for changes to the build/bundle.js and restart the node if any change
     "dev:server": "nodemon --watch build --exec node build/bundle.js",
     // start webpack to bundle the server code and rebuilt in case any changes
     "dev:build:server": "webpack --config webpack.server.js --watch",
     // start webpack to bundle the client side and watch it for changes
-    "dev:build:client": "webpack --config webpack.client.js --watch"
+    "dev:build:client": "webpack --config webpack.client.js --watch",
+   // execute all scriptss with one command
+   "dev":"npm-run-all  --parallel *dev:*"
   },
 ```
 
@@ -63,3 +65,19 @@
 ## six (refactoring )
 
 - refactor the webpack config in the client and server to have a common babel loader using **webpack merge**
+- current we need to run `npm dev:server` ,`dev:build:server` and `dev:build:client` to build and run the application ,now make the following changes to the script file to have a single command startup `npm run dev`
+
+```js
+
+ "scripts": {
+   // execute all the scripts below with one command
+   "dev":"npm-run-all  --parallel dev:*"
+
+    // set up nodemon the watc for changes to the build/bundle.js and restart the node if any change
+    "dev:server": "nodemon --watch build --exec node build/bundle.js",
+    // start webpack to bundle the server code and rebuilt in case any changes
+    "dev:build:server": "webpack --config webpack.server.js --watch",
+    // start webpack to bundle the client side and watch it for changes
+    "dev:build:client": "webpack --config webpack.client.js --watch",
+  },
+```
